@@ -64,3 +64,16 @@ tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
+
+tasks.register("countLines") {
+    var srcDir = "src/main/java"
+    var totalLines = 0
+
+    fileTree(srcDir).forEach { file ->
+        if (file.name.endsWith(".java")) {
+            totalLines += file.readLines().size
+        }
+    }
+    
+    println("Total Source Code Lines: $totalLines")
+}
