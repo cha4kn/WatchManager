@@ -35,6 +35,7 @@
 *.zip
 *.tar.gz
 *.rar
+!gradle/wrapper/gradle-wrapper.jar
 
 # Database
 *.db
