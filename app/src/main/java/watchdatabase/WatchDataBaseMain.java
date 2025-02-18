@@ -6,6 +6,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 
@@ -15,7 +19,8 @@ import watchdatabase.gui.WatchManagerGUI;
 import watchdatabase.models.LoginResult;
 
 public class WatchDataBaseMain {
-    
+    private static final Logger logger = LoggerFactory.getLogger(WatchDataBaseMain.class);
+
     private static final String DB_URL = "jdbc:sqlite:app/src/main/resources/watchmanager.db";
 
     public static void main(String[] args) {
@@ -32,7 +37,7 @@ public class WatchDataBaseMain {
             WatchManagerGUI frontend = new WatchManagerGUI(dbHelper, user);
             frontend.run();
         } else {
-            System.out.println("Error when logging in...");
+            logger.warn("Login cancelled. Exiting...");
             System.exit(1);
         }
     }
@@ -40,8 +45,8 @@ public class WatchDataBaseMain {
     private static void setLookAndFeel() {
         try {
             UIManager.setLookAndFeel(new FlatDarkLaf());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (UnsupportedLookAndFeelException e) {
+            logger.error("Caught exception when setting look and feel: " + e.toString());
         }
     }
 
@@ -67,14 +72,10 @@ public class WatchDataBaseMain {
             stmt.execute(createUserTable);
             stmt.execute(createWatchTable);
 
-            System.out.println("Tables created successfully in watchmanager.db!");
+            logger.debug("Tables created successfully in watchmanager.db!");
 
         } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
+            logger.error("Caught SQLException when creating tables: " + e.toString());
         }
-    }
-
-    private static boolean loginUser() {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

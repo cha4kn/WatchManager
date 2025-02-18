@@ -16,10 +16,14 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import watchdatabase.dbhelpers.UserDatabaseHelper;
 import watchdatabase.models.LoginResult;
 
 public class LoginManager extends JDialog {
+    private static final Logger logger = LoggerFactory.getLogger(LoginManager.class);
 
     private UserDatabaseHelper userDatabaseHelper;
     private JLabel statusLabel;
@@ -39,6 +43,7 @@ public class LoginManager extends JDialog {
     }
 
     private void initializeGUI() {
+        logger.debug("Initializing login GUI.");
         //setSize(300, 300);
         setLayout(new GridLayout(3, 2));
 
@@ -83,13 +88,15 @@ public class LoginManager extends JDialog {
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+        logger.debug("Login GUI finished.");
     }
 
     private boolean verifyUserPassword(String user, String password) {
         try {
             return userDatabaseHelper.verifyUserPassword(user, password);
         } catch (Exception e) {
-            statusLabel.setText("Error when logging in: " + e.getMessage());
+            statusLabel.setText("Unexpected error when logging in!");
+            logger.error("Caught exception when logging in: {}", e.toString());
             return false;
         }
     }
@@ -102,6 +109,7 @@ public class LoginManager extends JDialog {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                logger.debug("Creating new user...");
                 String newUsername = JOptionPane.showInputDialog(LoginManager.this, "Enter new username:");
                 if (newUsername != null && !newUsername.trim().isEmpty()) {
                     String newPassword = JOptionPane.showInputDialog(LoginManager.this, "Enter new password:");
@@ -128,6 +136,7 @@ public class LoginManager extends JDialog {
                     if (!newPassword.trim().isEmpty()) {
                         if (userDatabaseHelper.addUser(newUsername, newPassword)) {
                             JOptionPane.showMessageDialog(LoginManager.this, "User added successfully!");
+                            logger.debug("New user created!");
                         } else {
                             JOptionPane.showMessageDialog(LoginManager.this, "Adding new user failed!");
                         }
@@ -152,9 +161,11 @@ public class LoginManager extends JDialog {
                     statusLabel.setText("Login successful!");
                     JOptionPane.showMessageDialog(LoginManager.this, "Login successful!");
                     loginResult = new LoginResult(username, true);
+                    logger.debug("Login successful for user: {}", username);
                     dispose();
                 } else {
                     statusLabel.setText("Invalid credentials. Try again!");
+                    logger.debug("Invalid credentials provided for user: {}", username);
                 }
             }
         };

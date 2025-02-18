@@ -8,8 +8,11 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 import org.mindrot.jbcrypt.BCrypt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UserDatabaseHelper {
+    private static final Logger logger = LoggerFactory.getLogger(UserDatabaseHelper.class);
 
     private String dbUrl;
 
@@ -29,7 +32,7 @@ public class UserDatabaseHelper {
             System.out.println("User added successfully.");
             return true;
         } catch (SQLException e) {
-            System.out.println("Error adding user: " + e.getMessage());
+            logger.error("Caught SQLException when adding user: {}", e.toString());
             return false;
         }
     }
@@ -98,7 +101,7 @@ public class UserDatabaseHelper {
             int rowsAffected = pstmt.executeUpdate();
             
             if (rowsAffected > 0) {
-                System.out.println("User deleted successfully.");
+                logger.debug("Successfully deleted user: {}", username);
                 return true;
             } else {
                 throw new Exception("User not found.");

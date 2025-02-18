@@ -9,9 +9,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import watchdatabase.models.Watch;
 
 public class WatchDatabaseHelper {
+    private static final Logger logger = LoggerFactory.getLogger(WatchDatabaseHelper.class);
 
     private final String URL; // Path to SQLite DB file
 
@@ -37,7 +41,7 @@ public class WatchDatabaseHelper {
             pstmt.executeUpdate();
             System.out.println("Watch inserted.");
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Caught SQLException when inserting watch: {}", e.toString());
         }
     }
 
@@ -54,7 +58,7 @@ public class WatchDatabaseHelper {
             int rowsAffected = pstmt.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Caught SQLException when updating watch: {}", e.toString());
         }
         return false;
     }
@@ -66,7 +70,7 @@ public class WatchDatabaseHelper {
             int rowsAffected = pstmt.executeUpdate();  // Execute the DELETE query
             return rowsAffected > 0;  // Return true if a row was deleted
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Caught SQLException when deleting watch: {}", e.toString());
         }
         return false;  // Return false if there was an error or no row was deleted
     }
@@ -92,7 +96,7 @@ public class WatchDatabaseHelper {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Caught SQLException when getting watch: {}", e.toString());
         }
 
         return watch;  // Return the watch or null if not found
@@ -115,7 +119,7 @@ public class WatchDatabaseHelper {
                 watches.add(new Watch(id, brand, model, price, imagePath, user));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Caught SQLException when getting all watches: {}", e.toString());
         }
         return watches;
     }
@@ -135,7 +139,7 @@ public class WatchDatabaseHelper {
                 watches.add(new Watch(id, brand, model, price, imagePath, user));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Caught SQLException when getting watches for user: {}", e.toString());
         }
         return watches;
     }

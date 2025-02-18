@@ -11,10 +11,15 @@ import javax.swing.table.DefaultTableModel;
 import java.util.List;
 import javax.swing.table.TableRowSorter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import watchdatabase.dbhelpers.WatchDatabaseHelper;
 import watchdatabase.models.Watch;
 
 public class WatchManagerGUI {
+    private static final Logger logger = LoggerFactory.getLogger(WatchManagerGUI.class);
+
     private JFrame frame;
     private JTable watchTable;
     private DefaultTableModel tableModel;
@@ -46,6 +51,7 @@ public class WatchManagerGUI {
                 );
 
                 if (choice == JOptionPane.YES_OPTION) {
+                    logger.info("Exiting by user.");
                     System.exit(0); // Exit if user confirms
                 }
             }
@@ -76,6 +82,7 @@ public class WatchManagerGUI {
     }
 
     private void editWatch() {
+        logger.debug("Editing watch.");
         int selectedRow = watchTable.getSelectedRow();
         if (selectedRow != -1) {
             int id = (int) tableModel.getValueAt(selectedRow, 0);
@@ -132,9 +139,11 @@ public class WatchManagerGUI {
                 boolean success = databaseHelper.updateWatch(id, newBrand, newModel, newPrice, newImagePath, user);
                 if (success) {
                     JOptionPane.showMessageDialog(frame, "Watch updated successfully.");
+                    logger.debug("Watch successfully updated.");
                     loadWatchesIntoTable(); // Refresh the table
                 } else {
                     JOptionPane.showMessageDialog(frame, "Failed to update watch.");
+                    logger.error("Watch update failed!");
                 }
             }
         } else {
@@ -156,10 +165,11 @@ public class WatchManagerGUI {
 
     // Show a dialog to add a new watch
     private void addWatch() {
+        logger.debug("Adding new watch.");
         JTextField brandField = new JTextField();
         JTextField modelField = new JTextField();
         JTextField priceField = new JTextField();
-        JLabel imageLabel = new JLabel("No image selected");
+        imageLabel = new JLabel("No image selected");
 
         // Button to allow the user to select an image
         JButton btnSelectImage = new JButton("Select Image");
@@ -198,10 +208,12 @@ public class WatchManagerGUI {
             }
             // Refresh the table to reflect the new data
             loadWatchesIntoTable();
+            logger.debug("New watch added.");
         }
     }
 
     private void removeWatch() {
+        logger.debug("Removing watch.");
         int selectedRow = watchTable.getSelectedRow();
         if (selectedRow != -1) {
             // Get the ID of the selected watch (assumes ID is in the first column)
@@ -218,8 +230,10 @@ public class WatchManagerGUI {
                     JOptionPane.showMessageDialog(frame, "Watch deleted successfully.");
                     // Refresh the table to reflect the changes
                     loadWatchesIntoTable();
+                    logger.debug("Removed watch.");
                 } else {
                     JOptionPane.showMessageDialog(frame, "Failed to delete watch.");
+                    logger.error("Failed to remove watch!");
                 }
             }
         } else {
@@ -229,6 +243,7 @@ public class WatchManagerGUI {
 
     private void displayImage(String imagePath) {
         try {
+            logger.debug("Displaying image: {}", imagePath);
             // Load the image from the file path
             ImageIcon icon = new ImageIcon(imagePath);
             Image image = icon.getImage().getScaledInstance(250, 400, Image.SCALE_SMOOTH);
@@ -240,7 +255,7 @@ public class WatchManagerGUI {
             imageLabel.setBackground(Color.WHITE);
             imageLabel.setIcon(icon);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Caught exception when displaying image: {}", e.toString());
         }
     }
 
@@ -268,10 +283,12 @@ public class WatchManagerGUI {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
+                    logger.info("Starting GUI...");
                     frame.setLocationRelativeTo(null);
                     frame.setVisible(true);
+                    logger.info("GUI started.");
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.error("Caught exception when starting GUI: {}", e.toString());
                 }
             }
         });

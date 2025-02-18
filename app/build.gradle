@@ -44,6 +44,8 @@ dependencies {
     implementation 'org.swinglabs:swingx:1.6.1'  // SwingX for extended Swing functionality (optional)
     implementation 'com.formdev:flatlaf:3.2'
     implementation 'org.mindrot:jbcrypt:0.4'
+    implementation 'org.slf4j:slf4j-api:2.0.16'
+    implementation 'ch.qos.logback:logback-classic:1.5.16'
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
