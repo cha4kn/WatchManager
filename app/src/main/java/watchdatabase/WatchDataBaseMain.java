@@ -1,5 +1,10 @@
 package watchdatabase;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import javax.swing.UIManager;
 
 import com.formdev.flatlaf.FlatDarkLaf;
@@ -11,17 +16,19 @@ import watchdatabase.models.LoginResult;
 
 public class WatchDataBaseMain {
     
-    private static final String WATCH_DB_URL = "jdbc:sqlite:app/src/main/resources/watches.db";
-    private static final String USER_DB_URL = "jdbc:sqlite:app/src/main/resources/users.db";
+    private static final String DB_URL = "jdbc:sqlite:app/src/main/resources/watchmanager.db";
 
     public static void main(String[] args) {
+        initDatabase();
         setLookAndFeel();
-        LoginManager loginManager = new LoginManager(USER_DB_URL);
+        
+        // Log in user
+        LoginManager loginManager = new LoginManager(DB_URL);
         LoginResult loginResult = loginManager.getLoginResult();
         
         if (loginResult.success()) {
             String user = loginResult.user();
-            WatchDatabaseHelper dbHelper = new WatchDatabaseHelper(WATCH_DB_URL);
+            WatchDatabaseHelper dbHelper = new WatchDatabaseHelper(DB_URL);
             WatchManagerGUI frontend = new WatchManagerGUI(dbHelper, user);
             frontend.run();
         } else {
@@ -36,5 +43,38 @@ public class WatchDataBaseMain {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static void initDatabase() {
+        String createUserTable = "CREATE TABLE IF NOT EXISTS users (" +
+                                   "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                                   "username TEXT UNIQUE NOT NULL, " +
+                                   "password TEXT NOT NULL)";
+
+        String createWatchTable = "CREATE TABLE IF NOT EXISTS watches (" +
+                                   "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                                   "brand TEXT NOT NULL, " +
+                                   "model TEXT NOT NULL, " +
+                                   "price REAL NOT NULL, " +
+                                   "imagePath TEXT, " +
+                                   "user TEXT NOT NULL, " +
+                                   "FOREIGN KEY(user) REFERENCES users(username))";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             Statement stmt = conn.createStatement()) {
+
+            // Create both tables in the same database
+            stmt.execute(createUserTable);
+            stmt.execute(createWatchTable);
+
+            System.out.println("Tables created successfully in watchmanager.db!");
+
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private static boolean loginUser() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

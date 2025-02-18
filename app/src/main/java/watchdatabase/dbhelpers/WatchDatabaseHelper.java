@@ -17,29 +17,6 @@ public class WatchDatabaseHelper {
 
     public WatchDatabaseHelper (String dbURL) {
         this.URL = dbURL;
-        initializeDatabase();
-    }
-
-    // Initialize the database (Create table if it doesn't exist)
-    private void initializeDatabase() {
-        try (Connection conn = DriverManager.getConnection(URL)) {
-            if (conn != null) {
-                Statement stmt = conn.createStatement();
-                // Create table for watches
-                String createTableQuery = "CREATE TABLE IF NOT EXISTS watches (" +
-                        "id INTEGER PRIMARY KEY," +
-                        "brand TEXT NOT NULL," +
-                        "model TEXT NOT NULL," +
-                        "price REAL NOT NULL," +
-                        "imagePath TEXT," +
-                        "user TEXT NOT NULL" +
-                        ")";
-                stmt.execute(createTableQuery);
-                System.out.println("Database initialized.");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     // Get database connection

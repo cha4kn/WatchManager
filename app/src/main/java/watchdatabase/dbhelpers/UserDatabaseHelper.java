@@ -5,7 +5,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Optional;
 
 import org.mindrot.jbcrypt.BCrypt;
@@ -15,43 +14,7 @@ public class UserDatabaseHelper {
     private String dbUrl;
 
     public UserDatabaseHelper(String dbUrl) {
-/*         URL resourceUrl = UserDatabaseHelper.class.getClassLoader().getResource("resources/users.db");
-
-        if (resourceUrl == null) {
-            // If the resource is not found via the class loader, fall back to a default path
-            Path currentDir = Paths.get("").toAbsolutePath();
-            Path dbPath = currentDir.resolve("resources/users.db");
-            DB_URL = "jdbc:sqlite:" + dbPath.toString();
-        } else {
-            try {
-                URI uri = resourceUrl.toURI();
-                File file = new File(uri);
-                DB_URL = "jdbc:sqlite:" + file.getAbsolutePath();
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
-        } */
-       
         this.dbUrl = dbUrl;
-        try {
-            createTable();
-        } catch (SQLException e) {
-            System.out.println("Caught exception when creating table: " + e.toString());
-        }
-    }
-
-    private void createTable() throws SQLException {
-        String sql = "CREATE TABLE IF NOT EXISTS users (" +
-                     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                     "username TEXT UNIQUE NOT NULL," +
-                     "password TEXT NOT NULL)";
-        
-        try (Connection conn = DriverManager.getConnection(dbUrl);
-             Statement stmt = conn.createStatement()) {
-            stmt.execute(sql);
-        } catch (SQLException e) {
-            throw e;
-        }
     }
 
     public boolean addUser(String username, String password) {
