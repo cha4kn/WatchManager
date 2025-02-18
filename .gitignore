@@ -36,4 +36,5 @@
 *.tar.gz
 *.rar
 
-
+# Database
+*.db
