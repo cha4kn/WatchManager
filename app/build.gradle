@@ -9,22 +9,6 @@ plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'java'
     id 'application'
-    id 'edu.sc.seis.launch4j' version '3.0.6'
-}
-
-launch4j {
-    outfile = 'WatchManager.exe'
-    mainClassName = "watchdatabase.WatchDataBaseMain";
-}
-
-processResources {
-    from("src/main/resources") {
-        include "**/*"
-    }
-
-    into "$buildDir/launch4j/resources"
-
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 repositories {
@@ -59,6 +43,25 @@ application {
     // Define the main class for the application.
     mainClass = 'watchdatabase.WatchDataBaseMain'
 }
+
+task wipeDbFile {
+    doLast {
+        def dbFile = file("build/resources/main/watchmanager.db") // Pointing to the file in build/resources
+        if (dbFile.exists()) {
+            println "Emptying database file: ${dbFile}"
+            dbFile.withWriter('UTF-8') { writer ->
+                // Simply write nothing to the file, which clears its contents
+            }
+        } else {
+            println "Database file not found, skipping wipe."
+        }
+    }
+}
+
+// Make sure the wipeDbFile task runs after the resources are processed but before the build is finished
+processResources.finalizedBy wipeDbFile
+
+
 
 tasks.named('test') {
     // Use JUnit Platform for unit tests.

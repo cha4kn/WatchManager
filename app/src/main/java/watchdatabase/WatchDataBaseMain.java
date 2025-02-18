@@ -21,7 +21,8 @@ import watchdatabase.models.LoginResult;
 public class WatchDataBaseMain {
     private static final Logger logger = LoggerFactory.getLogger(WatchDataBaseMain.class);
 
-    private static final String DB_URL = "jdbc:sqlite:app/src/main/resources/watchmanager.db";
+    private static final String path = WatchDataBaseMain.class.getResource("/watchmanager.db").getPath();
+    public static final String DB_URL = "jdbc:sqlite:" + path;
 
     public static void main(String[] args) {
         initDatabase();
